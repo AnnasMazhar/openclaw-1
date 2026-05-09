@@ -120,7 +120,7 @@ describe("timeout-triggered compaction", () => {
         tokensBefore: 160000,
         tokensAfter: 60000,
         sessionId: "timeout-rotated-session",
-        sessionFile: "/tmp/timeout-rotated-session.json",
+        sessionFile: "sqlite-transcript://main/timeout-rotated-session.jsonl",
       }),
     );
     // Second attempt succeeds
@@ -128,7 +128,7 @@ describe("timeout-triggered compaction", () => {
       makeAttemptResult({
         promptError: null,
         sessionIdUsed: "timeout-rotated-session",
-        sessionFileUsed: "/tmp/timeout-rotated-session.json",
+        sessionFileUsed: "sqlite-transcript://main/timeout-rotated-session.jsonl",
       }),
     );
 
@@ -140,7 +140,7 @@ describe("timeout-triggered compaction", () => {
       2,
       expect.objectContaining({
         sessionId: "timeout-rotated-session",
-        sessionFile: "/tmp/timeout-rotated-session.json",
+        sessionFile: "sqlite-transcript://main/timeout-rotated-session.jsonl",
       }),
     );
     expect(mockedRunPostCompactionSideEffects).not.toHaveBeenCalled();
