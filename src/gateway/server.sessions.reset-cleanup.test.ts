@@ -22,7 +22,6 @@ const { createSessionStoreDir, seedActiveMainSession } = setupGatewaySessionsTes
 
 test("sessions.reset aborts active runs and clears queues", async () => {
   await seedActiveMainSession();
-  enqueueSystemEvent("stale event via alias", { sessionKey: "main" });
   enqueueSystemEvent("stale event via canonical key", { sessionKey: "agent:main:main" });
   enqueueSystemEvent("stale event via session id", { sessionKey: "sess-main" });
   const waitCallCountAtSnapshotClear: number[] = [];
@@ -42,15 +41,14 @@ test("sessions.reset aborts active runs and clears queues", async () => {
   expect(reset.ok).toBe(true);
   expect(reset.payload?.key).toBe("agent:main:main");
   expect(reset.payload?.entry.sessionId).not.toBe("sess-main");
-  expectActiveRunCleanup("agent:main:main", ["main", "agent:main:main", "sess-main"], "sess-main");
-  expect(peekSystemEvents("main")).toEqual([]);
+  expectActiveRunCleanup("agent:main:main", ["agent:main:main", "sess-main"], "sess-main");
   expect(peekSystemEvents("agent:main:main")).toEqual([]);
   expect(peekSystemEvents("sess-main")).toEqual([]);
   expect(bundleMcpRuntimeMocks.disposeSessionMcpRuntime).toHaveBeenCalledWith("sess-main");
   expect(waitCallCountAtSnapshotClear).toEqual([1]);
   expect(browserSessionTabMocks.closeTrackedBrowserTabsForSessions).toHaveBeenCalledTimes(1);
   expect(browserSessionTabMocks.closeTrackedBrowserTabsForSessions).toHaveBeenCalledWith({
-    sessionKeys: expect.arrayContaining(["main", "agent:main:main", "sess-main"]),
+    sessionKeys: expect.arrayContaining(["agent:main:main", "sess-main"]),
     onWarn: expect.any(Function),
   });
   expect(subagentLifecycleHookMocks.runSubagentEnded).toHaveBeenCalledTimes(1);

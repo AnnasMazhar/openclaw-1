@@ -5,6 +5,7 @@ import { afterAll, beforeAll, beforeEach, expect, vi } from "vitest";
 import type { AssistantMessage, UserMessage } from "../../agents/pi-ai-contract.js";
 import { readTranscriptState } from "../../agents/transcript/transcript-state.js";
 import type { SessionEntry } from "../../config/sessions.js";
+import { createSqliteSessionTranscriptLocator } from "../../config/sessions/paths.js";
 import { replaceSqliteSessionTranscriptEvents } from "../../config/sessions/transcript-store.sqlite.js";
 import type { InternalHookEvent } from "../../hooks/internal-hooks.js";
 import { resetSystemEventsForTest } from "../../infra/system-events.js";
@@ -324,12 +325,14 @@ export function setupGatewaySessionsTestHarness() {
 }
 
 export async function writeSingleLineSession(
-  dir: string,
+  _dir: string,
   sessionId: string,
   content: string,
   opts: { agentId?: string; transcriptPath?: string } = {},
 ) {
-  const transcriptPath = opts.transcriptPath ?? path.join(dir, `${sessionId}.jsonl`);
+  const transcriptPath =
+    opts.transcriptPath ??
+    createSqliteSessionTranscriptLocator({ agentId: opts.agentId ?? "main", sessionId });
   replaceSqliteSessionTranscriptEvents({
     agentId: opts.agentId ?? "main",
     sessionId,
