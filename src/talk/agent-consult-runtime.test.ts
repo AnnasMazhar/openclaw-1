@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createSqliteSessionTranscriptLocator } from "../config/sessions/paths.js";
 import {
   __setRealtimeVoiceAgentConsultDepsForTest,
   consultRealtimeVoiceAgent,
@@ -212,7 +213,10 @@ describe("realtime voice agent consult runtime", () => {
     const { runtime, runEmbeddedPiAgent, sessionStore } = createAgentRuntime();
     sessionStore["agent:main:main"] = {
       sessionId: "parent-session",
-      sessionFile: "/tmp/parent.jsonl",
+      sessionFile: createSqliteSessionTranscriptLocator({
+        agentId: "main",
+        sessionId: "parent-session",
+      }),
       totalTokens: 100,
       updatedAt: 1,
     };

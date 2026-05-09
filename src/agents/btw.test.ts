@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SessionEntry } from "../config/sessions.js";
+import { createSqliteSessionTranscriptLocator } from "../config/sessions/paths.js";
 
 const streamSimpleMock = vi.fn();
 const readFileMock = vi.fn();
@@ -138,7 +139,10 @@ function makeAsyncEvents(events: unknown[]) {
 function createSessionEntry(overrides: Partial<SessionEntry> = {}): SessionEntry {
   return {
     sessionId: "session-1",
-    sessionFile: "session-1.jsonl",
+    sessionFile: createSqliteSessionTranscriptLocator({
+      agentId: "main",
+      sessionId: "session-1",
+    }),
     updatedAt: Date.now(),
     ...overrides,
   };
